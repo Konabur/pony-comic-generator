@@ -32,7 +32,8 @@ def drawCenteredText(startY, text, draw, fnt, panelSize):
 		pprint(para)
 		#draw.text((5,5),para[0],font=fnt)
 		for line in para:
-			w, h = draw.textsize(line, font=fnt)
+			bbox = draw.textbbox((0, 0), line, font=fnt)
+			w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
 			draw.text(
 				((MAX_W - w) / 2, current_h),
 				line,

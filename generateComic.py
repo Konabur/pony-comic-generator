@@ -46,6 +46,7 @@ for arg in sys.argv:
 
 
 config = configparser.ConfigParser(inline_comment_prefixes=(';',))
+config.optionxform = str
 config.read_file(open('config.cfg'))
 
 # Load things from the config file
@@ -587,6 +588,8 @@ def processChatLog(file, specifiedBackground=None, specifiedTitle=None, debugpri
 			currentHeight += panel.size[1]
 	#img.show()
 	img = utilFunctions.possiblyTransform(img, 420) # Rotating the entire comic should be rarest of all
+	if img.mode == 'RGBA':
+		img = img.convert('RGB')
 	img.save("comic.jpg", "JPEG")
 
 
@@ -602,7 +605,8 @@ def main():
 		random.seed(clipboard)
 	else:
 		chatfile = open(textFileChat).readlines()
-		random.seed(open(textFileChat))
+		with open(textFileChat) as f:
+			random.seed(f.read())
 
 	processChatLog(chatfile, specifiedBackground, specifiedTitle, debugprint)
 
