@@ -85,7 +85,7 @@ def rollOdds(n, seed=None):
 		random.seed(seed)
 	n = int(n) # in case you're some wiseguy who uses a non-int to get yourself an error
 	if n < 1:
-		return false # rolling a die with no sides or negative sides will return false, rather than an error (for now)
+		return False # rolling a die with no sides or negative sides will return false, rather than an error (for now)
 	return random.randint(0, n-1) == 0
 
 # give a float decimal for odds
@@ -109,7 +109,7 @@ def getTransformList(length, nullWeight=10):
 def applyTransformList(list, image):
 	for transformation in list:
 		if transformation is not None:
-			image = image.transpose(Image.ROTATE_180)
+			image = image.transpose(eval(transformation))
 			# eval(transformation), so we're not relying on the hard-coded internal numbers in the Image module
 	return image
 
@@ -234,7 +234,7 @@ def genProbabilityDict(probabilityTable, outputDict=None, noneWeight=0):
 			outputDict[i] = entry
 		counter += weight
 	for i in range(counter, counter + noneWeight):
-		outuptDict[i] = None
+		outputDict[i] = None
 	return outputDict
 
 
