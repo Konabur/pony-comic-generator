@@ -1,12 +1,6 @@
 import urllib.request, urllib.parse, urllib.error
 import re
 import os
-from urllib.request import FancyURLopener
-
-class MyOpener(FancyURLopener):
-	version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
-myopener = MyOpener()
-urllib.request.URLopener.version = 'Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11'
 
 def slugify(value):
 	import unicodedata
