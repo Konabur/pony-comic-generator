@@ -4,7 +4,6 @@
 # vim: set fileencoding=UTF-8 :
 
 import urllib.request, urllib.parse, urllib.error
-from urllib.request import FancyURLopener
 from PIL import Image,ImageFont,ImageDraw
 import cacher
 #import msvcrt
