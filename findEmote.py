@@ -13,7 +13,7 @@ import cacher
 import configparser
 
 config = configparser.ConfigParser(inline_comment_prefixes=(';',))
-config.readfp(open('config.cfg'))
+config.read_file(open('config.cfg'))
 
 
 #

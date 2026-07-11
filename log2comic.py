@@ -67,7 +67,7 @@ if forcelines is not None and forcelines < 1:
 
 
 config = configparser.ConfigParser(inline_comment_prefixes=(';',))
-config.readfp(open('config.cfg'))
+config.read_file(open('config.cfg'))
 
 badfiles = config.get('Ignore','banned_backgrounds').split()
 skipname = config.get('Ignore','ignored_nicks').split()

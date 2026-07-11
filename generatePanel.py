@@ -29,7 +29,7 @@ def setPS(ps, info):
 
 
 config = configparser.ConfigParser(inline_comment_prefixes=(';',))
-config.readfp(open('config.cfg'))
+config.read_file(open('config.cfg'))
 
 fnt = ImageFont.truetype(config.get('Fonts','talk_font'), config.getint('Fonts','talk_size'))
 lineHeight = config.getint('Fonts','talk_height')

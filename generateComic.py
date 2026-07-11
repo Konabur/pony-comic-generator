@@ -46,7 +46,7 @@ for arg in sys.argv:
 
 
 config = configparser.ConfigParser(inline_comment_prefixes=(';',))
-config.readfp(open('config.cfg'))
+config.read_file(open('config.cfg'))
 
 # Load things from the config file
 selectedBackground = None
