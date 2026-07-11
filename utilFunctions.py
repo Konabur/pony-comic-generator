@@ -69,16 +69,6 @@ def pickNestedFile(directory, bad_files, seed=None):
 	else:
 		return directory+"/"+file
 
-# does a 2-pass check through PIL's im.transform() to access all 8 possible outcomes of one rotation optionally followed by one rotation
-def imageFlip(image):
-	tr = getTransform()
-	image = image.transpose(tr)
-	tr = getTransform(20)
-	if tr is None:
-		return image
-	else:
-		return image.transpose(tr) # 2 passes for best results
-
 # rolls an n-sided die and lets you know if the result is 0
 def rollOdds(n, seed=None):
 	if seed is not None:
@@ -200,20 +190,6 @@ def insertLineBreaks(text, maxCharsPerLine):
 	newstr = newstr.strip()
 	return newstr
 
-# draw a circle
-def circle(draw, center, radius):
-	draw.ellipse(
-		(
-			center[0] - radius + 1,
-			center[1] - radius + 1,
-			center[0] + radius - 1,
-			center[1] + radius - 1
-		),
-		fill=(255,255,255),
-		outline=None
-	)
-
-
 # This could be replaced with a Gaussian distribution with hard limits slapped on
 # This also has some inconsistent behavior about whether or not it will ever return high
 def triangularInt(low, high, mode, seed=None):
@@ -255,11 +231,6 @@ def decomposeNumericSwitchList(number, base, omitZero = True):
 		number%=component
 	return list
 
-# Decomposes a number used to represent a list of binary choices
-# Output is in the form of a list of the powers of 2 that compose the input number
-def decomposeBinarySwitches(number):
-	return uniqueSumOfPowersList(number,2)
-
 # Output is similar to decomposeNumericSwitchList except it shows a list of "place-values" instead of exponents
 def decomposeNumericComponents(number, base):
 	componentList = {}
@@ -270,14 +241,6 @@ def decomposeNumericComponents(number, base):
 	for exponent in list(exponentList.keys()):
 		componentList[base**exponent] = exponentList[exponent]
 	return componentList
-
-# generic version of decomposeBinarySwitches
-def uniqueSumOfPowersList(number, base):
-	complist = []
-	components = decomposeNumericComponents(number, base)
-	for component in list(components.keys()):
-		complist.append(component*components[component])
-	return complist
 
 # check for joined/quit messages and remove them
 def quitline(line):
