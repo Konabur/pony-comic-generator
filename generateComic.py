@@ -110,7 +110,7 @@ if __name__ == "__main__":
 	except:
 		print('could not retrieve default alias list, using local version')
 config2 = configparser.ConfigParser()
-config2.readfp(open('DEFAULT_ALIAS_DO_NOT_EDIT.cfg'))
+config2.read_file(open('DEFAULT_ALIAS_DO_NOT_EDIT.cfg'))
 allNames = dict(config2.items('Aliases'))
 
 # Set up names list
