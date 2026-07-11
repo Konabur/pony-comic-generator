@@ -14,6 +14,7 @@ import sys
 from pprint import pprint
 import pyperclip
 import findEmote
+from getch import getch as _getch
 
 NUM_SELECTIONS_EACH_IMAGE=2
 customTags={}
@@ -110,7 +111,7 @@ def processDataRecursive(tag,image):
 			tag2=oneInList(customTags[tag],tagsByImage[image])
 		if tag2 is None:
 			print(('choose:\n['+"]        [".join(customTags[tag])+']\n\n\n'))
-			charused=msvcrt.getch()
+			charused=_getch()()
 			if charused=='\t':
 				ad( imageByTags,'incompatible',image)
 				ad(tagsByImage,image,'incompatible')
