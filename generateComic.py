@@ -132,10 +132,6 @@ def init_globals():
 
 def setup():
 	global textFileChat, specifiedBackground, specifiedTitle
-	global config, fntLarge, fntSmall, anonymousMode, uploadImgur, castIntro
-	global repeatMode, closeupMultiplier, allowDuplicates, rainbowCast
-	global debugprint, removebot, ignored_users, defaultseed
-	global uploadReddit, reddit, client, allNames, allText, lines, names
 
 	#command line options
 	textFileChat = None
