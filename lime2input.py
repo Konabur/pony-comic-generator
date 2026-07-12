@@ -67,7 +67,7 @@ if guessstrat is None:
 nonVerbSList = [
 	"yours",
 	"ours",
-	"hours"
+	"hours",
 	"how's"
 ]
 questionTriggerList = [
@@ -111,7 +111,7 @@ def convertLimelog(limechat, guessstrat):
 		if len(wordlist) > 3 and ':' in wordlist[2]: # remove time stamps from the bouncer
 			wordlist.remove(wordlist[2])
 		newchat.append(processLine(wordlist[1], wordlist[2:], guessstrat))
-		newchat += '\n' # make sure everything is on its own line
+		newchat.append('\n') # make sure everything is on its own line
 	return newchat
 
 """

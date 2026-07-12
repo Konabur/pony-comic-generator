@@ -4,7 +4,6 @@
 # vim: set fileencoding=UTF-8 :
 
 import urllib.request, urllib.parse, urllib.error
-from urllib.request import FancyURLopener
 from PIL import Image,ImageFont,ImageDraw
 import cacher
 #import msvcrt
@@ -14,6 +13,8 @@ import sys
 from pprint import pprint
 import pyperclip
 import findEmote
+from getch import getch
+_getch = getch()
 
 NUM_SELECTIONS_EACH_IMAGE=2
 customTags={}
@@ -110,7 +111,7 @@ def processDataRecursive(tag,image):
 			tag2=oneInList(customTags[tag],tagsByImage[image])
 		if tag2 is None:
 			print(('choose:\n['+"]        [".join(customTags[tag])+']\n\n\n'))
-			charused=msvcrt.getch()
+			charused=_getch()
 			if charused=='\t':
 				ad( imageByTags,'incompatible',image)
 				ad(tagsByImage,image,'incompatible')

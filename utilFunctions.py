@@ -32,7 +32,8 @@ def drawCenteredText(startY, text, draw, fnt, panelSize):
 		pprint(para)
 		#draw.text((5,5),para[0],font=fnt)
 		for line in para:
-			w, h = draw.textsize(line, font=fnt)
+			bbox = draw.textbbox((0, 0), line, font=fnt)
+			w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
 			draw.text(
 				((MAX_W - w) / 2, current_h),
 				line,
@@ -69,48 +70,36 @@ def pickNestedFile(directory, bad_files, seed=None):
 	else:
 		return directory+"/"+file
 
-# does a 2-pass check through PIL's im.transform() to access all 8 possible outcomes of one rotation optionally followed by one rotation
-def imageFlip(image):
-	tr = getTransform()
-	image = image.transpose(tr)
-	tr = getTransform(20)
-	if tr is None:
-		return image
-	else:
-		return image.transpose(tr) # 2 passes for best results
-
 # rolls an n-sided die and lets you know if the result is 0
 def rollOdds(n, seed=None):
 	if seed is not None:
 		random.seed(seed)
 	n = int(n) # in case you're some wiseguy who uses a non-int to get yourself an error
 	if n < 1:
-		return false # rolling a die with no sides or negative sides will return false, rather than an error (for now)
+		return False # rolling a die with no sides or negative sides will return false, rather than an error (for now)
 	return random.randint(0, n-1) == 0
-
-# give a float decimal for odds
-def rollFraction(odds, seed=None):
-	if seed is not None:
-		random.seed(seed)
-	if odds > 1:
-		return random.random() < (1.0/float(odds))
-	else:
-		return random.random() < odds
 
 # generates a list of transformations to feed to PIL's im.transform()
 # nullWeight is the relative (to the size of transform_D) likelihood that you don't do any transformation for that step
 def getTransformList(length, nullWeight=10):
 	list = []
-	for i in (1, length):
+	for i in range(1, length + 1):
 		list.append(getTransform(nullWeight))
 	return list
+
+_TRANSFORM_MAP = {
+	'Image.FLIP_LEFT_RIGHT': Image.FLIP_LEFT_RIGHT,
+	'Image.FLIP_TOP_BOTTOM': Image.FLIP_TOP_BOTTOM,
+	'Image.ROTATE_90': Image.ROTATE_90,
+	'Image.ROTATE_180': Image.ROTATE_180,
+	'Image.ROTATE_270': Image.ROTATE_270,
+}
 
 # applies a list of transformations to an image
 def applyTransformList(list, image):
 	for transformation in list:
 		if transformation is not None:
-			image = image.transpose(Image.ROTATE_180)
-			# eval(transformation), so we're not relying on the hard-coded internal numbers in the Image module
+			image = image.transpose(_TRANSFORM_MAP[transformation])
 	return image
 
 # Possibly transforms an image
@@ -200,20 +189,6 @@ def insertLineBreaks(text, maxCharsPerLine):
 	newstr = newstr.strip()
 	return newstr
 
-# draw a circle
-def circle(draw, center, radius):
-	draw.ellipse(
-		(
-			center[0] - radius + 1,
-			center[1] - radius + 1,
-			center[0] + radius - 1,
-			center[1] + radius - 1
-		),
-		fill=(255,255,255),
-		outline=None
-	)
-
-
 # This could be replaced with a Gaussian distribution with hard limits slapped on
 # This also has some inconsistent behavior about whether or not it will ever return high
 def triangularInt(low, high, mode, seed=None):
@@ -234,7 +209,7 @@ def genProbabilityDict(probabilityTable, outputDict=None, noneWeight=0):
 			outputDict[i] = entry
 		counter += weight
 	for i in range(counter, counter + noneWeight):
-		outuptDict[i] = None
+		outputDict[i] = None
 	return outputDict
 
 
@@ -255,11 +230,6 @@ def decomposeNumericSwitchList(number, base, omitZero = True):
 		number%=component
 	return list
 
-# Decomposes a number used to represent a list of binary choices
-# Output is in the form of a list of the powers of 2 that compose the input number
-def decomposeBinarySwitches(number):
-	return uniqueSumOfPowersList(number,2)
-
 # Output is similar to decomposeNumericSwitchList except it shows a list of "place-values" instead of exponents
 def decomposeNumericComponents(number, base):
 	componentList = {}
@@ -270,14 +240,6 @@ def decomposeNumericComponents(number, base):
 	for exponent in list(exponentList.keys()):
 		componentList[base**exponent] = exponentList[exponent]
 	return componentList
-
-# generic version of decomposeBinarySwitches
-def uniqueSumOfPowersList(number, base):
-	complist = []
-	components = decomposeNumericComponents(number, base)
-	for component in list(components.keys()):
-		complist.append(component*components[component])
-	return complist
 
 # check for joined/quit messages and remove them
 def quitline(line):
@@ -334,7 +296,7 @@ def soloURL(line):
 		return True
 	if line[-3:].lower() in webendings:
 		return True
-	return True
+	return False
 
 # similar to pickNestedFile but returns a directory, the directory list, and an index
 # assumes that at least one good file exists within the deepest subdirectory

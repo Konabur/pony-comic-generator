@@ -12,7 +12,7 @@ from getch import getch
 
 daynum=31
 print('enter emote tag: ')
-tag=eval(input())
+tag=input().strip()
 index=0
 emotes=findEmote.emotesByPony[tag]
 

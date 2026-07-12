@@ -25,69 +25,33 @@ import utilFunctions
 import string
 
 
-#command line options
+# Module-level globals (populated by setup())
 textFileChat = None
 specifiedBackground = None
-specifiedTitle  = None
-nextToFill = None
-for arg in sys.argv:
-	if arg[0] == '-':
-		nextToFill = arg[1:].lower()
-	else:
-		if nextToFill is not None:
-			if nextToFill[0] == 'f':
-				textFileChat = arg
-			if nextToFill[0] == 'b':
-				specifiedBackground = arg
-			if nextToFill[0] == 't':
-				specifiedTitle = arg
-		nextToFill = None
-
-
-
-config = configparser.ConfigParser(inline_comment_prefixes=(';',))
-config.readfp(open('config.cfg'))
-
-# Load things from the config file
-selectedBackground = None
-fntLarge = ImageFont.truetype(config.get('Fonts','title_font'), int(config.get('Fonts','title_size'))) # used for the title
-fntSmall = ImageFont.truetype(config.get('Fonts','cast_font'), int(config.get('Fonts','cast_size'))) # used for the list of characters
-anonymousMode = config.get('Options','anonymous_mode').upper()=='TRUE'
-uploadImgur = config.get('Options','upload_imgur').upper()=='TRUE'
-castIntro = config.get('Options','cast_introduction')
-repeatMode = config.get('Options','keep_window_open').upper()=='TRUE'
-closeupMultiplier = config.getfloat('Options','closeup_zoom')
-allowDuplicates = config.get('Options','allow_duplicates').upper()=='TRUE'
-rainbowCast = config.get('Options','rainbow_cast').upper()=='TRUE'
-debugprint = config.get('Options','terminal_debug').upper()=='TRUE'
-removebot = config.get('Options','remove_bot_commands').upper()=='TRUE'
-ignored_users = config.get('Ignore', 'ignored_nicks').split()
-defaultseed = config.get('Options','default_seed')
-
-
-if debugprint is True:
-	print('Verbose mode activated!')
-	print(('chat from log: '+str(textFileChat)))
-
-
+specifiedTitle = None
+config = None
+fntLarge = None
+fntSmall = None
+anonymousMode = None
+uploadImgur = None
+castIntro = None
+repeatMode = None
+closeupMultiplier = None
+allowDuplicates = None
+rainbowCast = None
+debugprint = None
+removebot = None
+ignored_users = None
+defaultseed = None
 uploadReddit = None
 reddit = None
-if config.has_section('praw') and len(config.get('praw','clientid'))>2:
-	#print 'praw stuff:'+config.get('praw','clientid')+"^"
-	uploadReddit=config.get('praw','upload')
-	reddit = praw.Reddit(client_id=config.get('praw','clientid'),
-					client_secret=config.get('praw','clientsecret'),
-					user_agent='user agent',
-					username=config.get('praw','username'),
-					password=config.get('praw','password'))
-	print(('reddit credentials:'+str(config.get('praw','clientsecret'))+" "+config.get('praw','clientid')))
-
-imgareio = '174becf08a64efc'
-imgscrioertu = 'c47422a4a3a7a4aab366b88634bcc03a0ffcaa60'
-client = ImgurClient(imgareio, imgscrioertu)
+client = None
+allNames = {}
+allText = ""
+lines = []
+names = {}
 
 
-#direct print output to log file
 class Logger(object):
 	def __init__(self):
 		self.terminal = sys.stdout
@@ -97,11 +61,51 @@ class Logger(object):
 		self.terminal.write(message)
 		self.log.write(message)
 
-sys.stdout = Logger()
+
+def init_globals():
+	global config, fntLarge, fntSmall, anonymousMode, uploadImgur, castIntro
+	global repeatMode, closeupMultiplier, allowDuplicates, rainbowCast
+	global debugprint, removebot, ignored_users, defaultseed
+	global uploadReddit, reddit, client, allNames, allText, lines, names
+
+	config = configparser.ConfigParser(inline_comment_prefixes=(';',))
+	config.optionxform = str
+	with open('config.cfg') as f:
+		config.read_file(f)
+
+	fntLarge = ImageFont.truetype(config.get('Fonts','title_font'), int(config.get('Fonts','title_size')))
+	fntSmall = ImageFont.truetype(config.get('Fonts','cast_font'), int(config.get('Fonts','cast_size')))
+	anonymousMode = config.get('Options','anonymous_mode').upper()=='TRUE'
+	uploadImgur = config.get('Options','upload_imgur').upper()=='TRUE'
+	castIntro = config.get('Options','cast_introduction')
+	repeatMode = config.get('Options','keep_window_open').upper()=='TRUE'
+	closeupMultiplier = config.getfloat('Options','closeup_zoom')
+	allowDuplicates = config.get('Options','allow_duplicates').upper()=='TRUE'
+	rainbowCast = config.get('Options','rainbow_cast').upper()=='TRUE'
+	debugprint = config.get('Options','terminal_debug').upper()=='TRUE'
+	removebot = config.get('Options','remove_bot_commands').upper()=='TRUE'
+	ignored_users = config.get('Ignore', 'ignored_nicks').split()
+	defaultseed = config.get('Options','default_seed')
+
+	if debugprint is True:
+		print('Verbose mode activated!')
+		print(('chat from log: '+str(textFileChat)))
+
+	uploadReddit = None
+	reddit = None
+	if config.has_section('praw') and len(config.get('praw','clientid'))>2:
+		uploadReddit=config.get('praw','upload')
+		reddit = praw.Reddit(client_id=config.get('praw','clientid'),
+						client_secret=config.get('praw','clientsecret'),
+						user_agent='user agent',
+						username=config.get('praw','username'),
+						password=config.get('praw','password'))
 
 
-# don't call this unless you're calling this routine directly
-if __name__ == "__main__":
+	client = ImgurClient('174becf08a64efc', 'c47422a4a3a7a4aab366b88634bcc03a0ffcaa60')
+
+	sys.stdout = Logger()
+
 	try:
 		urllib.request.urlretrieve(
 			'https://raw.githubusercontent.com/chickens2/pony-comic-generator/master/DEFAULT_ALIAS_DO_NOT_EDIT.cfg',
@@ -109,23 +113,47 @@ if __name__ == "__main__":
 		)
 	except:
 		print('could not retrieve default alias list, using local version')
-config2 = configparser.ConfigParser()
-config2.readfp(open('DEFAULT_ALIAS_DO_NOT_EDIT.cfg'))
-allNames = dict(config2.items('Aliases'))
 
-# Set up names list
-allText = ""
-lines = []
-allNames.update(dict(config.items('Aliases'))) #add aliases from config.cfg, overwrite defaults
-allNames2 = {}
-for key in list(allNames.keys()):
-	allNames2[key.lower()] = allNames[key].lower()
-allNames = allNames2
-if debugprint is True:
-	print('final alias list: ')
-	pprint(allNames)
-names = {}
+	config2 = configparser.ConfigParser()
+	with open('DEFAULT_ALIAS_DO_NOT_EDIT.cfg') as f:
+		config2.read_file(f)
+	allNames = dict(config2.items('Aliases'))
 
+	allText = ""
+	lines = []
+	allNames.update(dict(config.items('Aliases')))
+	allNames2 = {}
+	for key in list(allNames.keys()):
+		allNames2[key.lower()] = allNames[key].lower()
+	allNames = allNames2
+	if debugprint is True:
+		print('final alias list: ')
+		pprint(allNames)
+	names = {}
+
+
+def setup():
+	global textFileChat, specifiedBackground, specifiedTitle
+
+	#command line options
+	textFileChat = None
+	specifiedBackground = None
+	specifiedTitle = None
+	nextToFill = None
+	for arg in sys.argv:
+		if arg[0] == '-':
+			nextToFill = arg[1:].lower()
+		else:
+			if nextToFill is not None:
+				if nextToFill[0] == 'f':
+					textFileChat = arg
+				if nextToFill[0] == 'b':
+					specifiedBackground = arg
+				if nextToFill[0] == 't':
+					specifiedTitle = arg
+			nextToFill = None
+
+	init_globals()
 
 
 # Pick a title for the strip
@@ -267,7 +295,7 @@ def createNextPanel(txtLines, panelSize, smallPanels, nameorder, selectedBackgro
 
 	for line in txtLines:
 		if line.get('pony', None) is None:
-			raise ModuleNotFoundError(str(line)+" does not contain a pony!!!!!!  Quitting.")
+			raise ValueError(str(line)+" does not contain a pony!!!!!!  Quitting.")
 			sys.exit(7)
 
 	if dialogueChoice == 0:
@@ -587,12 +615,14 @@ def processChatLog(file, specifiedBackground=None, specifiedTitle=None, debugpri
 			currentHeight += panel.size[1]
 	#img.show()
 	img = utilFunctions.possiblyTransform(img, 420) # Rotating the entire comic should be rarest of all
+	if img.mode == 'RGBA':
+		img = img.convert('RGB')
 	img.save("comic.jpg", "JPEG")
 
 
 def main():
 	global comic_title
-	print("Main method")
+	setup()
 	chatfile = None
 	if textFileChat is None:
 		clipboard = pyperclip.paste()
@@ -601,8 +631,10 @@ def main():
 		chatfile = io.StringIO(clipboard).readlines()
 		random.seed(clipboard)
 	else:
-		chatfile = open(textFileChat).readlines()
-		random.seed(open(textFileChat))
+		with open(textFileChat) as f:
+			chatfile = f.readlines()
+		with open(textFileChat) as f:
+			random.seed(f.read())
 
 	processChatLog(chatfile, specifiedBackground, specifiedTitle, debugprint)
 
