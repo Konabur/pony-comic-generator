@@ -14,25 +14,6 @@ def slugify(value):
 		value = re.sub('[-\s]+', '-', value)
 	return value
 
-def getCache(file):
-	#fndomain=slugify(domain.decode('unicode-escape'))
-	fpurl='cachedData/'+file
-	if not os.path.isfile(fpurl):
-		return None
-	else:
-		f=open(fpurl,'r')
-		return f.read()
-
-def writeCache(file,data):
-	data=str(data)
-	fpurl='cachedData/'+file
-	newfolder='cachedData'
-	if not os.path.exists(newfolder):
-		os.makedirs(newfolder)
-	f=open(fpurl,'w+')
-	f.write(data)
-	f.close()
-
 def getUrlFile(url):
 	#print 'getting file: '+url
 	urlfn=slugify(url)
@@ -41,5 +22,5 @@ def getUrlFile(url):
 		print(('whats going wrong here: '+url+"^"+fpurl))
 		urllib.request.urlretrieve(url,fpurl)
 		#data=myopener.open(url).read()
-		#writeCache(urlfn,data)
+
 	return fpurl

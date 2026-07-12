@@ -79,15 +79,6 @@ def rollOdds(n, seed=None):
 		return False # rolling a die with no sides or negative sides will return false, rather than an error (for now)
 	return random.randint(0, n-1) == 0
 
-# give a float decimal for odds
-def rollFraction(odds, seed=None):
-	if seed is not None:
-		random.seed(seed)
-	if odds > 1:
-		return random.random() < (1.0/float(odds))
-	else:
-		return random.random() < odds
-
 # generates a list of transformations to feed to PIL's im.transform()
 # nullWeight is the relative (to the size of transform_D) likelihood that you don't do any transformation for that step
 def getTransformList(length, nullWeight=10):
