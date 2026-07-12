@@ -100,7 +100,7 @@ def init_globals():
 						user_agent='user agent',
 						username=config.get('praw','username'),
 						password=config.get('praw','password'))
-		print(('reddit credentials:'+str(config.get('praw','clientsecret'))+" "+config.get('praw','clientid')))
+		print('reddit credentials configured')
 
 	client = ImgurClient('174becf08a64efc', 'c47422a4a3a7a4aab366b88634bcc03a0ffcaa60')
 
@@ -295,7 +295,7 @@ def createNextPanel(txtLines, panelSize, smallPanels, nameorder, selectedBackgro
 
 	for line in txtLines:
 		if line.get('pony', None) is None:
-			raise ModuleNotFoundError(str(line)+" does not contain a pony!!!!!!  Quitting.")
+			raise ValueError(str(line)+" does not contain a pony!!!!!!  Quitting.")
 			sys.exit(7)
 
 	if dialogueChoice == 0:

@@ -83,7 +83,7 @@ def rollOdds(n, seed=None):
 # nullWeight is the relative (to the size of transform_D) likelihood that you don't do any transformation for that step
 def getTransformList(length, nullWeight=10):
 	list = []
-	for i in (1, length):
+	for i in range(1, length + 1):
 		list.append(getTransform(nullWeight))
 	return list
 
