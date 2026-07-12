@@ -13,7 +13,8 @@ import sys
 from pprint import pprint
 import pyperclip
 import findEmote
-from getch import getch as _getch
+from getch import getch
+_getch = getch()
 
 NUM_SELECTIONS_EACH_IMAGE=2
 customTags={}

@@ -96,12 +96,19 @@ def getTransformList(length, nullWeight=10):
 		list.append(getTransform(nullWeight))
 	return list
 
+_TRANSFORM_MAP = {
+	'Image.FLIP_LEFT_RIGHT': Image.FLIP_LEFT_RIGHT,
+	'Image.FLIP_TOP_BOTTOM': Image.FLIP_TOP_BOTTOM,
+	'Image.ROTATE_90': Image.ROTATE_90,
+	'Image.ROTATE_180': Image.ROTATE_180,
+	'Image.ROTATE_270': Image.ROTATE_270,
+}
+
 # applies a list of transformations to an image
 def applyTransformList(list, image):
 	for transformation in list:
 		if transformation is not None:
-			image = image.transpose(eval(transformation))
-			# eval(transformation), so we're not relying on the hard-coded internal numbers in the Image module
+			image = image.transpose(_TRANSFORM_MAP[transformation])
 	return image
 
 # Possibly transforms an image
@@ -298,7 +305,7 @@ def soloURL(line):
 		return True
 	if line[-3:].lower() in webendings:
 		return True
-	return True
+	return False
 
 # similar to pickNestedFile but returns a directory, the directory list, and an index
 # assumes that at least one good file exists within the deepest subdirectory
