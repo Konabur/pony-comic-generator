@@ -100,7 +100,7 @@ def init_globals():
 						user_agent='user agent',
 						username=config.get('praw','username'),
 						password=config.get('praw','password'))
-		print('reddit credentials configured')
+
 
 	client = ImgurClient('174becf08a64efc', 'c47422a4a3a7a4aab366b88634bcc03a0ffcaa60')
 

@@ -20,6 +20,7 @@ testLogs/*
 backgrounds/Custom/*
 misc-script/*
 config.cfg
+testSystem/testResults/*.jpg
 
 #
 # Python .gitignore from GitHub

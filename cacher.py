@@ -3,16 +3,8 @@ import re
 import os
 
 def slugify(value):
-	import unicodedata
-	print((type(value)))
-	if not isinstance(value, str):
-		value = unicodedata.normalize('NFKD', value).encode('ascii', 'ignore')
-		value = str(re.sub('[^\w\s-]', '', value).strip().lower())
-		value = str(re.sub('[-\s]+', '-', value))
-	else:
-		value = re.sub('[^\w\s-]', '', value.strip().lower())
-		value = re.sub('[-\s]+', '-', value)
-	return value
+	value = re.sub(r'[^\w\s-]+', '', value.strip().lower())
+	return re.sub(r'[-\s]+', '-', value)
 
 def getUrlFile(url):
 	#print 'getting file: '+url
