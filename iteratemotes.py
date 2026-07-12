@@ -111,7 +111,7 @@ def processDataRecursive(tag,image):
 			tag2=oneInList(customTags[tag],tagsByImage[image])
 		if tag2 is None:
 			print(('choose:\n['+"]        [".join(customTags[tag])+']\n\n\n'))
-			charused=_getch()()
+			charused=_getch()
 			if charused=='\t':
 				ad( imageByTags,'incompatible',image)
 				ad(tagsByImage,image,'incompatible')
