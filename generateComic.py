@@ -70,7 +70,8 @@ def init_globals():
 
 	config = configparser.ConfigParser(inline_comment_prefixes=(';',))
 	config.optionxform = str
-	config.read_file(open('config.cfg'))
+	with open('config.cfg') as f:
+		config.read_file(f)
 
 	fntLarge = ImageFont.truetype(config.get('Fonts','title_font'), int(config.get('Fonts','title_size')))
 	fntSmall = ImageFont.truetype(config.get('Fonts','cast_font'), int(config.get('Fonts','cast_size')))
@@ -114,7 +115,8 @@ def init_globals():
 		print('could not retrieve default alias list, using local version')
 
 	config2 = configparser.ConfigParser()
-	config2.read_file(open('DEFAULT_ALIAS_DO_NOT_EDIT.cfg'))
+	with open('DEFAULT_ALIAS_DO_NOT_EDIT.cfg') as f:
+		config2.read_file(f)
 	allNames = dict(config2.items('Aliases'))
 
 	allText = ""
