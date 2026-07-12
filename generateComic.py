@@ -62,30 +62,11 @@ class Logger(object):
 		self.log.write(message)
 
 
-def setup():
-	global textFileChat, specifiedBackground, specifiedTitle
+def init_globals():
 	global config, fntLarge, fntSmall, anonymousMode, uploadImgur, castIntro
 	global repeatMode, closeupMultiplier, allowDuplicates, rainbowCast
 	global debugprint, removebot, ignored_users, defaultseed
 	global uploadReddit, reddit, client, allNames, allText, lines, names
-
-	#command line options
-	textFileChat = None
-	specifiedBackground = None
-	specifiedTitle = None
-	nextToFill = None
-	for arg in sys.argv:
-		if arg[0] == '-':
-			nextToFill = arg[1:].lower()
-		else:
-			if nextToFill is not None:
-				if nextToFill[0] == 'f':
-					textFileChat = arg
-				if nextToFill[0] == 'b':
-					specifiedBackground = arg
-				if nextToFill[0] == 't':
-					specifiedTitle = arg
-			nextToFill = None
 
 	config = configparser.ConfigParser(inline_comment_prefixes=(';',))
 	config.optionxform = str
@@ -147,6 +128,34 @@ def setup():
 		print('final alias list: ')
 		pprint(allNames)
 	names = {}
+
+
+def setup():
+	global textFileChat, specifiedBackground, specifiedTitle
+	global config, fntLarge, fntSmall, anonymousMode, uploadImgur, castIntro
+	global repeatMode, closeupMultiplier, allowDuplicates, rainbowCast
+	global debugprint, removebot, ignored_users, defaultseed
+	global uploadReddit, reddit, client, allNames, allText, lines, names
+
+	#command line options
+	textFileChat = None
+	specifiedBackground = None
+	specifiedTitle = None
+	nextToFill = None
+	for arg in sys.argv:
+		if arg[0] == '-':
+			nextToFill = arg[1:].lower()
+		else:
+			if nextToFill is not None:
+				if nextToFill[0] == 'f':
+					textFileChat = arg
+				if nextToFill[0] == 'b':
+					specifiedBackground = arg
+				if nextToFill[0] == 't':
+					specifiedTitle = arg
+			nextToFill = None
+
+	init_globals()
 
 
 # Pick a title for the strip

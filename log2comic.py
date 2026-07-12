@@ -16,7 +16,7 @@ import configparser
 import utilFunctions
 import string
 import random
-from generateComic import processChatLog
+from generateComic import processChatLog, init_globals
 from lime2input import convertLimelog
 
 """
@@ -161,6 +161,7 @@ def main():
 				found = True
 
 	print(selectedlines)
+	init_globals()
 	processChatLog(selectedlines)
 
 if __name__ == "__main__":
